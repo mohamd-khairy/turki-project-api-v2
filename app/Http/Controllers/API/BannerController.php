@@ -148,7 +148,7 @@ class BannerController extends Controller
             'redirect_mobile_url' => 'sometimes',
             'is_active' => 'required',
             'type' => 'sometimes',
-            'image' => 'required',
+            'image' => 'sometimes',
             'product_id' => 'sometimes',
 
         ]);
@@ -175,7 +175,7 @@ class BannerController extends Controller
 
             $request->file('image')->storeAs('public/marketingBoxImages/' . $banner['id'], $imageName);
         }
-        
+
         if ($banner) {
             return response()->json([
                 'success' => true, 'message' => '', 'description' => "", "code" => "200",
