@@ -22,13 +22,16 @@ use App\Services\PointLocation;
 use App\Services\PolygonCalculation;
 use App\Services\sbPolygonEngine;
 use geoPHP;
+
 class BannerController extends Controller
 {
 
     public function getBannerById(Banner $banner)
     {
-        return response()->json(['success' => true, 'message' => '', 'description' => "", "code" => "200",
-            "data" => new BannerDetailsResource($banner)], 200);
+        return response()->json([
+            'success' => true, 'message' => '', 'description' => "", "code" => "200",
+            "data" => new BannerDetailsResource($banner)
+        ], 200);
     }
 
     // public function getBannerByCategory($category){
@@ -46,84 +49,87 @@ class BannerController extends Controller
     //         $categories = Category::where('id', $category->id)->get();
     //     }
 
-        
+
     //     $data = CategoryListWithBannerResource::Collection($categories);
 
     //     return response()->json(['success' => true ,'data'=> $data,
     //         'message'=> 'retrieved successfully', 'description'=> '', 'code'=>'200'],200);
     // }
 
- public function getBannerByCategory(Request $request , $category){
+    public function getBannerByCategory(Request $request, $category)
+    {
 
-         $active = $request->query('active');
+        $active = $request->query('active');
 
         $category = Category::find($category);
         if ($category == null)
-            return response()->json(['success' => false ,'data'=> null,
-                'message'=> 'not found', 'description'=> '', 'code'=>'404'],404);
-            
-    // get by location
+            return response()->json([
+                'success' => false, 'data' => null,
+                'message' => 'not found', 'description' => '', 'code' => '404'
+            ], 404);
 
-    $point = $request->query('longitude') . " " . $request->query('latitude');
-    $countryId = $request->query('countryId');
-    $country = Country::where('code', $countryId)->get()->first();
+        // get by location
 
-    if ($country === null)
-        return response()->json(['data'=> [],
-            'success' => true, 'message'=> 'success', 'description'=>'this service not available in your country!', 'code'=>'200'],200);
+        $point = $request->query('longitude') . " " . $request->query('latitude');
+        $countryId = $request->query('countryId');
+        $country = Country::where('code', $countryId)->get()->first();
 
-    $currentCity = app(PointLocation::class)->getLocatedCity($country, $point);
+        if ($country === null)
+            return response()->json([
+                'data' => [],
+                'success' => true, 'message' => 'success', 'description' => 'this service not available in your country!', 'code' => '200'
+            ], 200);
+
+        $currentCity = app(PointLocation::class)->getLocatedCity($country, $point);
 
 
-    if ($currentCity != null){
-       
-        $bannerIds = BannerCity::where('city_id', $currentCity->id)->distinct()->pluck('banner_id');
-        
-        $banners = Banner::whereIn('id', $bannerIds)->where('category_id', $category->id)->where('is_active', '1')->orderBy('id','DESC')->get();
-       
-    }
-    else
-    $banners = [];
+        if ($currentCity != null) {
+
+            $bannerIds = BannerCity::where('city_id', $currentCity->id)->distinct()->pluck('banner_id');
+
+            $banners = Banner::whereIn('id', $bannerIds)->where('category_id', $category->id)->where('is_active', '1')->orderBy('id', 'DESC')->get();
+        } else
+            $banners = [];
 
         $data =  CategoryListWithBannerTestResource::collection($banners);
-        return response()->json(['success' => true ,'data'=> $data,
-        'message'=> 'Categories retrieved successfully', 'description'=> 'list Of Categories', 'code'=>'200'],200);
-
+        return response()->json([
+            'success' => true, 'data' => $data,
+            'message' => 'Categories retrieved successfully', 'description' => 'list Of Categories', 'code' => '200'
+        ], 200);
     }
 
-//  public function getBanners(Request $request)
-//     {
-//         $banners = Banner::where('is_active', '1')->get();
-//         return response()->json(['success' => true, 'message' => '', 'description' => "", "code" => "200",
-//             "data" => BannerListResource::Collection($banners)], 200);
-//     }
-    
+    //  public function getBanners(Request $request)
+    //     {
+    //         $banners = Banner::where('is_active', '1')->get();
+    //         return response()->json(['success' => true, 'message' => '', 'description' => "", "code" => "200",
+    //             "data" => BannerListResource::Collection($banners)], 200);
+    //     }
+
     public function getBanners(Request $request)
     {
         $active = $request->query('active');
-        
-         if($active == "1")
-         {
-             $bannersActive = Banner::where('is_active', '1')->get();
-             
-              return response()->json(['success' => true, 'message' => '', 'description' => "", "code" => "200",
-            "data" => BannerListResource::Collection($bannersActive)], 200);
-         }
-         elseif($active == "0"){
-             $banners = Banner::get();
-             
-              return response()->json(['success' => true, 'message' => '', 'description' => "", "code" => "200",
-            "data" => BannerListResource::Collection($banners)], 200);
-         }
-        
-        
+
+        if ($active == "1") {
+            $banners = Banner::where('is_active', '1')->get();
+        } elseif ($active == "0") {
+            $banners = Banner::get();
+        } else {
+            $banners = Banner::get();
+        }
+
+        return response()->json([
+            'success' => true, 'message' => '', 'description' => "", "code" => "200",
+            "data" => BannerListResource::Collection($banners)
+        ], 200);
     }
 
-     public function getBannersDashboard(Request $request)
+    public function getBannersDashboard(Request $request)
     {
         $banners = Banner::get();
-        return response()->json(['success' => true, 'message' => '', 'description' => "", "code" => "200",
-            "data" => BannerListResource::Collection($banners)], 200);
+        return response()->json([
+            'success' => true, 'message' => '', 'description' => "", "code" => "200",
+            "data" => BannerListResource::Collection($banners)
+        ], 200);
     }
 
 
@@ -146,33 +152,36 @@ class BannerController extends Controller
             'product_id' => 'sometimes',
 
         ]);
-     
-      
+
+
         $imageName = $request->file('image')->hashName();
 
         $Category = Category::where('id', $validatedData['category_id'])->get()->first();
-     
+
         if ($Category == null)
             return response()->json(['success' => false, 'data' => null, 'message' => "failed, check your selected  category!", 'description' => "", 'code' => "400"], 400);
-           
-        $city_ids = explode(',', $validatedData['city_ids']);    
+
+        $city_ids = explode(',', $validatedData['city_ids']);
         $cities = City::whereIn('id', $city_ids)->get();
 
         $validatedData['image'] = $imageName;
         $banner = Banner::create($validatedData);
 
         $banner->bannerCities()->attach($cities);
-      
-      
-        $request->file('image')->storeAs('public/marketingBoxImages/'.$banner['id'], $imageName);
 
-            if($banner){
-                return response()->json(['success' => true, 'message' => '', 'description' => "", "code" => "200",
-                    "data" => $banner], 200);
-            }
-        else
-            return response()->json(['success' => false, 'message' => 'ERROR PLEASE TRY AGAIN LATER', 'description' => "", "code" => "400",
-                "data" => $banner], 400);
+
+        $request->file('image')->storeAs('public/marketingBoxImages/' . $banner['id'], $imageName);
+
+        if ($banner) {
+            return response()->json([
+                'success' => true, 'message' => '', 'description' => "", "code" => "200",
+                "data" => $banner
+            ], 200);
+        } else
+            return response()->json([
+                'success' => false, 'message' => 'ERROR PLEASE TRY AGAIN LATER', 'description' => "", "code" => "400",
+                "data" => $banner
+            ], 400);
     }
 
     public function updateBanner(Banner $banner, Request $request)
@@ -190,10 +199,10 @@ class BannerController extends Controller
             'redirect_mobile_url' => 'sometimes',
             'is_active' => 'sometimes',
             'type' => 'sometimes',
-            'image'=> 'sometimes|mimes:png,jpeg,jpg',
+            'image' => 'sometimes|mimes:png,jpeg,jpg',
         ]);
 
-        if ($request->has('image')){
+        if ($request->has('image')) {
             $imageName = $request->file('image')->hashName();
             $validatedate['image'] = $imageName;
         }
@@ -207,25 +216,22 @@ class BannerController extends Controller
         $cities = City::whereIn('id', $city_ids)->get();
 
 
-        Storage::delete('public/marketingBoxImages/'.$banner->id.'/'.$banner->image);
-        
-          $banner->bannerCities()->sync($cities);
-        if($banner->update($validatedate)){
+        Storage::delete('public/marketingBoxImages/' . $banner->id . '/' . $banner->image);
 
-           //$request->file('image')->storeAs('public/marketingBoxImages/'.$banner->id, $imageName);
-           
-            if ($request->file('image')){
-            $imageName = $request->file('image')->storeAs('public/marketingBoxImages/'.$banner->id, $imageName);
-            $validatedate['image'] = $imageName;
-        }
+        $banner->bannerCities()->sync($cities);
+        if ($banner->update($validatedate)) {
 
-            return response()->json(['massage:'=>'Marketing box has been updated successfully','data'=> $banner],200);
-        }
-        else{
+            //$request->file('image')->storeAs('public/marketingBoxImages/'.$banner->id, $imageName);
+
+            if ($request->file('image')) {
+                $imageName = $request->file('image')->storeAs('public/marketingBoxImages/' . $banner->id, $imageName);
+                $validatedate['image'] = $imageName;
+            }
+
+            return response()->json(['massage:' => 'Marketing box has been updated successfully', 'data' => $banner], 200);
+        } else {
             return response()->json(['message' => 'ERROR PLEASE TRY AGAIN LATER'], 500);
         }
-
-
     }
 
 
@@ -233,13 +239,11 @@ class BannerController extends Controller
     {
         $id = $banner->id;
 
-        if($banner->delete()){
-            Storage::delete('public/marketingBoxImages/'.$id.'/'.$banner->image);
-            return response()->json(['massage:'=>'Marketing box has been deleted successfully'],200);
-        }
-        else{
+        if ($banner->delete()) {
+            Storage::delete('public/marketingBoxImages/' . $id . '/' . $banner->image);
+            return response()->json(['massage:' => 'Marketing box has been deleted successfully'], 200);
+        } else {
             return response()->json(['message' => 'ERROR PLEASE TRY AGAIN LATER'], 500);
         }
-
     }
 }
