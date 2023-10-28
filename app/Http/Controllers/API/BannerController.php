@@ -166,6 +166,8 @@ class BannerController extends Controller
         if ($request->file('image')) {
             $imageName = $request->file('image')->hashName();
             $validatedData['image'] = $imageName;
+        }else{
+            $validatedData['image'] = 'image';
         }
         $banner = Banner::create($validatedData);
 
