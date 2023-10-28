@@ -28,7 +28,7 @@ Route::namespace("API")->prefix("v1")->group(function () {
     Route::post('/verfiyOtpCode-v2', [\App\Http\Controllers\API\AuthenticationController::class, 'verfiyOTPv2']);
     Route::post('login', [\App\Http\Controllers\API\AuthenticationController::class, 'login']);
     Route::get('testlogin/{mobile}', [\App\Http\Controllers\API\AuthenticationController::class, 'testLogin']);
-    Route::post('register', [\App\Http\Controllers\API\AuthenticationController::class, 'createUser']);
+    Route::post('register', [\App\Http\Controllers\API\AuthenticationController::class, 'register']);
 
 
     Route::get('/driver/send-driver-otp/{orderId}', [\App\Http\Controllers\API\AuthenticationController::class, 'sendDriverOTP']);
