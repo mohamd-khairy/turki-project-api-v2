@@ -53,17 +53,17 @@ class Category extends Model
 
     public function getImageUrlAttribute()
     {
-        return config('app.url') . Storage::url($this->image);
+        return $this->image ? config('app.url') . Storage::url($this->image) : null;
     }
 
     public function getBannerUrlAttribute()
     {
-        return config('app.url') . Storage::url($this->banner);
+        return $this->banner ? config('app.url') . Storage::url($this->banner) : null;
     }
 
     public function getThumbnailUrlAttribute()
     {
-        return config('app.url') . Storage::url($this->thumbnail);
+        return $this->thumbnail ? config('app.url') . Storage::url($this->thumbnail) : null;
     }
 
     public function product()
