@@ -26,7 +26,6 @@ class AuthenticationController extends Controller
     {
 
         if (auth()->user()->id != 1)
-
             return response()->json(['data' => null, 'message' => "contact admin!", 'description' => "", 'code' => "401"], 401);
 
         $validateData = $request->validate([
