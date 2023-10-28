@@ -25,7 +25,7 @@ class AuthenticationController extends Controller
     public function createUser(Request $request)
     {
 
-        if (auth()->user()->id != 1)
+        if (auth()->check() && auth()->user()->id != 1)
             return response()->json(['data' => null, 'message' => "contact admin!", 'description' => "", 'code' => "401"], 401);
 
         $validateData = $request->validate([
