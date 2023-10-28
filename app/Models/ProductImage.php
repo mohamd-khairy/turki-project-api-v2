@@ -9,7 +9,7 @@ use Intervention\Image\ImageManagerStatic as Image;
 class ProductImage extends Model
 {
     protected $fillable = ['image','thumbnail','product_id', 'is_default'];
-    protected $appends = ['image_url', 'thumbnail_url'];
+    // protected $appends = ['image_url', 'thumbnail_url'];
     protected $hidden = ['image', 'thumbnail','created_at','updated_at'];
 
     public static function uploadFile(Request $request, $product, $uploadedData)
