@@ -26,11 +26,11 @@ class Banner extends Model
         'category_id'
     ];
 
-    protected $appends = ['url'];
+    // protected $appends = ['url'];
 
-    public function getUrlAttribute(){
-        return config('app.url').Storage::url('app/public/marketingBoxImages/'.$this->id.'/'.$this->image);
-    }
+    // public function getUrlAttribute(){
+    //     return config('app.url').Storage::url('app/public/marketingBoxImages/'.$this->id.'/'.$this->image);
+    // }
 
     public function scopeActive($query){
         return $query -> where('is_active',1) ;
