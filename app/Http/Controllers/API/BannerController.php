@@ -154,7 +154,6 @@ class BannerController extends Controller
         ]);
 
 
-        $imageName = $request->file('image')->hashName();
 
         $Category = Category::where('id', $validatedData['category_id'])->get()->first();
 
@@ -164,14 +163,19 @@ class BannerController extends Controller
         $city_ids = explode(',', $validatedData['city_ids']);
         $cities = City::whereIn('id', $city_ids)->get();
 
-        $validatedData['image'] = $imageName;
+        if ($request->file('image')) {
+            $imageName = $request->file('image')->hashName();
+            $validatedData['image'] = $imageName;
+        }
         $banner = Banner::create($validatedData);
 
         $banner->bannerCities()->attach($cities);
 
+        if ($request->file('image')) {
 
-        $request->file('image')->storeAs('public/marketingBoxImages/' . $banner['id'], $imageName);
-
+            $request->file('image')->storeAs('public/marketingBoxImages/' . $banner['id'], $imageName);
+        }
+        
         if ($banner) {
             return response()->json([
                 'success' => true, 'message' => '', 'description' => "", "code" => "200",
